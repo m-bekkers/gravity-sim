@@ -1,0 +1,20 @@
+#version 330 core
+
+// vec3 is is a vector of 3 components.
+// it has to be 3 components since we use 3 components in C.
+
+// layout(location = 0) is the buffer to feed vertexPosition_modelspace
+// a vertex can have many attributes: position, colour, texture coordinates, etc.
+// OpenGL doesn't know which attribute is what so we have to specify
+// this is done by setting location equal to the first param passed to glVertexAttribPointer
+
+// vertexPosition_modelspace will contain the position of the vertex for each run of the vertex shader
+
+// in means we expect some input data
+
+layout(location = 0) in vec3 vertexPosition_modelspace;
+
+void main() {
+    gl_Position.xyz = vertexPosition_modelspace;
+    ggl_Position.w = 1.0;
+}
