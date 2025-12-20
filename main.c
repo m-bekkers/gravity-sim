@@ -5,7 +5,10 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-// note that we are not using the gml/glm.hpp library for 3D maths, we'll have to write our own
+#include <cglm/cglm.h>
+
+#include "common/loadShader.c"
+
 
 int main() {
     
@@ -14,7 +17,7 @@ int main() {
         fprintf(stderr, "Failed to initialize GLFW\n");
         return -1;
     }
-
+    
     // Window creation
     glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // opengl 3.3
@@ -36,12 +39,12 @@ int main() {
         fprintf(stderr, "Failed to init GLEW\n");
         return -1;
     }
-
+    
     // create a VAO (vertex array object)
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
-
+    glBindVertexArray(VertexArrayID); // set as current
+    
     // ensure we can capture esc keypress
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     
@@ -60,13 +63,17 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     // give vertices to opengl
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    
+    // create and compile glsl program from shaders
+    GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
     do {
         // clear the screen - may cause flickering
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(programID);
+        
         // drawing here
-
+        
         // 1st attribute buffer: vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
